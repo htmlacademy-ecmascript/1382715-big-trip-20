@@ -2,10 +2,7 @@ import {createElement} from '../render.js';
 
 function createTripEventsList() {
   return `
-     <ul class="trip-events__list">
-        <li class="trip-events__item"></li>
-        <li class="trip-events__item"></li>
-      </ul>
+     <ul class="trip-events__list"></ul>
   `;
 }
 
