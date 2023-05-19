@@ -1,20 +1,21 @@
 import {createElement} from '../render.js';
 import {humanizeDateMonthDay, humanizeDateHoursMin, humanizeDurationTime} from '../utils/date.js';
 
-const creatOffersList = (arr) => arr.map((item) => `<li class="event__offer">
+
+const creatOffersList = (offers) => offers.map((item) => `<li class="event__offer">
   <span class="event__offer-title">${item.title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${item.price}</span>
 </li>`).join('');
 
 function createEventOverview(detailEventModel) {
-  const {type, destination, dateFrom, dateTo, offers, isFavorite, basePrice} = detailEventModel;
+  const {type, destination, dateFrom, dateTo, isFavorite, basePrice} = detailEventModel;
   const eventName = `${type} ${destination.name}`;
   const eventDate = humanizeDateMonthDay(dateFrom);
   const eventTimeFrom = humanizeDateHoursMin(dateFrom);
   const eventTimeTo = humanizeDateHoursMin(dateTo);
   const eventTimeDuration = humanizeDurationTime(dateFrom, dateTo);
-  const eventOffers = creatOffersList(offers);
+  const eventOffers = creatOffersList(detailEventModel.getSelectedOffers());
   const eventFavoriteClassName = isFavorite
     ? 'event__favorite-btn--active'
     : '';

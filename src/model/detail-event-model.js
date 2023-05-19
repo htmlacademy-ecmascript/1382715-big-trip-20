@@ -7,7 +7,8 @@ export default class DetailEventModel {
     isFavorite,
     type,
     destination,
-    offers
+    allOffers,
+    selectedOffersId
   }) {
     this.pointId = pointId;
     this.basePrice = basePrice;
@@ -16,7 +17,8 @@ export default class DetailEventModel {
     this.isFavorite = isFavorite;
     this.type = type;
     this.destination = destination;
-    this.offers = offers;
+    this.allOffers = allOffers;
+    this.selectedOffersId = selectedOffersId;
   }
 
   getPointId() {
@@ -47,7 +49,21 @@ export default class DetailEventModel {
     return this.destination;
   }
 
-  getOffers() {
-    return this.offers;
+  getAllOffers() {
+    return this.allOffers;
+  }
+
+  getSelectedOffersId() {
+    return this.selectedOffersId;
+  }
+
+  getSelectedOffers() {
+    const selectedOffers = [];
+    this.allOffers.forEach((offer) => {
+      if (this.selectedOffersId.includes(offer.id)) {
+        selectedOffers.push(offer);
+      }
+    });
+    return selectedOffers;
   }
 }

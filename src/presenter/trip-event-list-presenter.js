@@ -2,20 +2,12 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import TripEventItemView from '../view/trip-event-item-view.js';
 import EventOverviewView from '../view/event-overview-view.js';
 import EventCardView from '../view/event-card-view.js';
-import EventInformatioView from '../view/event-information-view.js';
-import EventOffersView from '../view/event-offers-view.js';
-import EventDestinationView from '../view/event-destination-view.js';
 
-import {render, RenderPosition} from '../render.js';
-import * as events from 'events';
+import {render} from '../render.js';
 import DetailEventModel from '../model/detail-event-model';
 
 export default class TripEventListPresenter {
   tripEventList = new TripEventsListView();
-  eventCardComponent = new EventCardView();
-  eventInformationComponent = new EventInformatioView();
-  eventOffersComponent = new EventOffersView();
-  eventDestination = new EventDestinationView();
 
   constructor({tripEvents, eventsModel}) {
     this.tripEvents = tripEvents;
@@ -27,27 +19,15 @@ export default class TripEventListPresenter {
     this.destinations = [...this.eventsModel.getDestinations()];
     this.availableOffers = this.eventsModel.getOffers();
 
-//    console.log("DATA=> ", this.events);
-
-    // BEFORE
-//    render(this.tripEventList, this.tripEvents);
-//    for(let i = 0; i < 3; i++) {
-//      if(i === 0) {
-//        render(new TripEventItemView(), this.tripEventList.getElement());
-//        render(this.eventInformationComponent, this.eventCardComponent.getElement(), RenderPosition.AFTERBEGIN);
-//        render(this.eventOffersComponent, this.eventCardComponent.getElement().querySelector('.event__details'));
-//        render(this.eventDestination, this.eventCardComponent.getElement().querySelector('.event__details'));
-//        render(this.eventCardComponent, this.tripEventList.getElement().querySelectorAll('.trip-events__item')[i]);
-//      } else {
-//        render(new TripEventItemView(), this.tripEventList.getElement());
-//        render(new EventOverviewView(), this.tripEventList.getElement().querySelectorAll('.trip-events__item')[i]);
-//      }
-//    }
-
-//    NEW
-
     render(this.tripEventList, this.tripEvents);
-    for(let i = 0; i < this.events.length; i++) {
+    render(new TripEventItemView(), this.tripEventList.getElement());
+    render(
+      new EventCardView({
+        detailEventModel: this.createDetailEventModel(this.events[0])
+      }),
+      this.tripEventList.getElement().querySelectorAll('.trip-events__item')[0]);
+
+    for(let i = 1; i < this.events.length; i++) {
       render(new TripEventItemView(), this.tripEventList.getElement());
       render(
         new EventOverviewView({
@@ -60,10 +40,6 @@ export default class TripEventListPresenter {
 
   createDetailEventModel(event) {
     const offersForPointByType = this.availableOffers.find((value) => value.type === event.type).offers;
-    const availableOffersForPoint = [];
-    event.offers.forEach((offerId) => {
-      availableOffersForPoint.push(offersForPointByType.find((value) => value.id === offerId));
-    });
 
     return new DetailEventModel({
       pointId: event.id,
@@ -73,7 +49,8 @@ export default class TripEventListPresenter {
       isFavorite: event.isFavorite,
       type: event.type,
       destination: this.destinations.find((value) => value.id === event.destination),
-      offers: availableOffersForPoint,
+      allOffers: offersForPointByType,
+      selectedOffersId: event.offers,
     });
   }
 }
