@@ -1,4 +1,4 @@
-import {render} from './render.js';
+import {render} from './framework/render.js';
 import TripFilters from './view/trip-filters-view.js';
 import TripSort from './view/trip-sort-view.js';
 import TripEventListPresenter from './presenter/trip-event-list-presenter.js';

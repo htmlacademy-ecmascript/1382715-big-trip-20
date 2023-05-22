@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
 import {EVENT_TYPES, DESTINATION_LIST} from '../const.js';
 import DetailEventModel from '../model/detail-event-model';
+import AbstractView from '../framework/view/abstract-view.js';
 
 //const NEW_EVENT = {};
 
@@ -136,24 +136,13 @@ function createEventCard(detailEventModel) {
   `;
 }
 
-export default class EventCardView {
+export default class EventCardView extends AbstractView {
   constructor({detailEventModel = NEW_EVENT}) {
+    super();
     this.detailEventModel = detailEventModel;
   }
 
-  getTemplate() {
+  get template() {
     return createEventCard(this.detailEventModel);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

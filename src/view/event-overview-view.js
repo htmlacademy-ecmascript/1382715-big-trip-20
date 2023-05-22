@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
 import {humanizeDateMonthDay, humanizeDateHoursMin, humanizeDurationTime} from '../utils/date.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 const creatOffersList = (offers) => offers.map((item) => `<li class="event__offer">
@@ -55,24 +55,13 @@ function createEventOverview(detailEventModel) {
   `;
 }
 
-export default class EventOverview{
+export default class EventOverview extends AbstractView{
   constructor({detailEventModel}) {
+    super();
     this.detailEventModel = detailEventModel;
   }
 
-  getTemplate() {
+  get template() {
     return createEventOverview(this.detailEventModel);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
