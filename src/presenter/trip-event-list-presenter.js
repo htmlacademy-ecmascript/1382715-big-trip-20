@@ -21,25 +21,34 @@ export default class TripEventListPresenter {
     this.availableOffers = this.#eventsModel.offers;
 
     render(this.#tripEventList, this.#tripEvents);
-    render(new TripEventItemView(), this.#tripEventList.element);
-    render(
-      new EventCardView({
-        detailEventModel: this.createDetailEventModel(this.events[0])
-      }),
-      this.#tripEventList.element.querySelectorAll('.trip-events__item')[0]);
+    this.#renderEventCard(this.events[0], 0);
 
     for(let i = 1; i < this.events.length; i++) {
-      render(new TripEventItemView(), this.#tripEventList.element);
-      render(
-        new EventOverviewView({
-          detailEventModel:this.createDetailEventModel(this.events[i])
-        }),
-        this.#tripEventList.element.querySelectorAll('.trip-events__item')[i]
-      );
+      this.#renderEventOverview(this.events[i], i);
     }
   }
 
-  createDetailEventModel(event) {
+  #renderEventOverview(event, index) {
+    const tripEventItem = new TripEventItemView();
+    const tripOverview = new EventOverviewView({
+      detailEventModel:this.#createDetailEventModel(event)
+    });
+
+    render(tripEventItem, this.#tripEventList.element);
+    render(tripOverview, this.#tripEventList.element.querySelectorAll('.trip-events__item')[index]);
+  }
+
+  #renderEventCard(event, index) {
+    const tripEventItem = new TripEventItemView();
+    const eventCard = new EventCardView({
+      detailEventModel: this.#createDetailEventModel(event)
+    });
+
+    render(tripEventItem, this.#tripEventList.element);
+    render(eventCard, this.#tripEventList.element.querySelectorAll('.trip-events__item')[index]);
+  }
+
+  #createDetailEventModel(event) {
     const offersForPointByType = this.availableOffers.find((value) => value.type === event.type).offers;
 
     return new DetailEventModel({
