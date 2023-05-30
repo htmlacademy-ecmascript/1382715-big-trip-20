@@ -2,6 +2,7 @@ import {render, replace, remove} from '../framework/render.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import EventOverviewView from '../view/event-overview-view.js';
 import EventCardView from '../view/event-card-view.js';
+import EventListEmptyView from '../view/event-list-empty-view.js';
 
 import DetailEventModel from '../model/detail-event-model';
 
@@ -27,6 +28,10 @@ export default class TripEventListPresenter {
 
   #renderEventList() {
     render(this.#tripEventList, this.#tripEvents);
+
+    if(!this.#events.length) {
+      this.#renderEventListEmpty();
+    }
 
     for(let i = 0; i < this.#events.length; i++) {
       this.#renderEvent(this.#events[i]);
@@ -67,6 +72,10 @@ export default class TripEventListPresenter {
     }
 
     render(overviewComponnet, this.#tripEventList.element);
+  }
+
+  #renderEventListEmpty() {
+    render(new EventListEmptyView, this.#tripEvents);
   }
 
   #createDetailEventModel(event) {
