@@ -126,23 +126,37 @@ function createEventCard(detailEventModel) {
   const destinationTemplate = creatEventDestination(destination);
 
   return `
-    <form class="event event--edit" action="#" method="post">
-      ${headerTemplate}
-      <section class="event__details">
-        ${offersTemplate}
-        ${destinationTemplate}
-      </section>
-    </form>
+    <li class="trip-events__item">
+      <form class="event event--edit" action="#" method="post">
+        ${headerTemplate}
+        <section class="event__details">
+          ${offersTemplate}
+          ${destinationTemplate}
+        </section>
+      </form>
+    </li>
   `;
 }
 
 export default class EventCardView extends AbstractView {
-  constructor({detailEventModel = NEW_EVENT}) {
+  #detailEventModel = null;
+  #handleFormSubmit = null;
+
+  constructor({detailEventModel = NEW_EVENT, onFormSubmit}) {
     super();
-    this.detailEventModel = detailEventModel;
+    this.#detailEventModel = detailEventModel;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
-    return createEventCard(this.detailEventModel);
+    return createEventCard(this.#detailEventModel);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
