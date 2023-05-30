@@ -22,10 +22,14 @@ export default class TripEventListPresenter {
     this.#destinations = [...this.#eventsModel.destinations];
     this.#availableOffers = this.#eventsModel.offers;
 
+    this.#renderEventList();
+  }
+
+  #renderEventList() {
     render(this.#tripEventList, this.#tripEvents);
 
     for(let i = 0; i < this.#events.length; i++) {
-      this.#renderEvent(this.#events[i], i);
+      this.#renderEvent(this.#events[i]);
     }
   }
 
