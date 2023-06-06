@@ -4,8 +4,8 @@ const points = [
   {
     id: '01',
     basePrice: getRandomInt(200, 500),
-    dateFrom: '2024-08-04T22:28:01.397Z',
-    dateTo: '2024-08-05T11:28:01.397Z',
+    dateFrom: '2025-08-04T22:28:01.397Z',
+    dateTo: '2025-08-05T11:28:01.397Z',
     destination: '1',
     isFavorite: true,
     offers: ['2', '3'],
@@ -34,8 +34,8 @@ const points = [
   {
     id: '04',
     basePrice: getRandomInt(200, 500),
-    dateFrom: '2024-08-11T09:28:01.397Z',
-    dateTo: '2024-08-11T23:28:01.397Z',
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-08-11T23:28:01.397Z',
     destination: '2',
     isFavorite: true,
     offers: ['1', '2'],
