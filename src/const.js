@@ -2,4 +2,11 @@ const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-i
 
 const DESTINATION_LIST = ['Amsterdam', 'Geneva', 'Chamonix'];
 
-export {EVENT_TYPES, DESTINATION_LIST};
+const FilterType = {
+  EVERYTHING : 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export {EVENT_TYPES, DESTINATION_LIST, FilterType};

@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
 import {EVENT_TYPES, DESTINATION_LIST} from '../const.js';
 import DetailEventModel from '../model/detail-event-model';
+import AbstractView from '../framework/view/abstract-view.js';
 
 //const NEW_EVENT = {};
 
@@ -126,34 +126,37 @@ function createEventCard(detailEventModel) {
   const destinationTemplate = creatEventDestination(destination);
 
   return `
-    <form class="event event--edit" action="#" method="post">
-      ${headerTemplate}
-      <section class="event__details">
-        ${offersTemplate}
-        ${destinationTemplate}
-      </section>
-    </form>
+    <li class="trip-events__item">
+      <form class="event event--edit" action="#" method="post">
+        ${headerTemplate}
+        <section class="event__details">
+          ${offersTemplate}
+          ${destinationTemplate}
+        </section>
+      </form>
+    </li>
   `;
 }
 
-export default class EventCardView {
-  constructor({detailEventModel = NEW_EVENT}) {
-    this.detailEventModel = detailEventModel;
+export default class EventCardView extends AbstractView {
+  #detailEventModel = null;
+  #handleFormSubmit = null;
+
+  constructor({detailEventModel = NEW_EVENT, onFormSubmit}) {
+    super();
+    this.#detailEventModel = detailEventModel;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
   }
 
-  getTemplate() {
-    return createEventCard(this.detailEventModel);
+  get template() {
+    return createEventCard(this.#detailEventModel);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

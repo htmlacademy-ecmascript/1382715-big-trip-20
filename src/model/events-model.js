@@ -3,21 +3,26 @@ import {destinations} from '../mock/destinations.js';
 import {offers} from '../mock/offers.js';
 
 export default class EventsModel {
+  #points = null;
+  #destinations = null;
+  #offers = null;
+
+  // Do we need constructor here?
   constructor() {
-    this.points = points;
-    this.destinations = destinations;
-    this.offers = offers;
+    this.#points = points;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
 }
