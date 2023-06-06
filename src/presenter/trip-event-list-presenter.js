@@ -1,4 +1,4 @@
-import {render, replace, remove} from '../framework/render.js';
+import {render, replace} from '../framework/render.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import EventOverviewView from '../view/event-overview-view.js';
 import EventCardView from '../view/event-card-view.js';
