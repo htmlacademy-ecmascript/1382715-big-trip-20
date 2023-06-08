@@ -1,13 +1,13 @@
-import {render, replace} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import EventOverviewView from '../view/event-overview-view.js';
-import EventCardView from '../view/event-card-view.js';
 import EventListEmptyView from '../view/event-list-empty-view.js';
+import PointPresenter from './point-presenter.js';
 
 import DetailEventModel from '../model/detail-event-model';
 
 export default class TripEventListPresenter {
   #tripEventList = new TripEventsListView();
+  #noEventListComponnet = new EventListEmptyView();
   #tripEvents = null;
   #eventsModel = null;
   #events = null;
@@ -39,43 +39,15 @@ export default class TripEventListPresenter {
   }
 
   #renderEvent(event) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditCardToOverview();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const overviewComponnet = new EventOverviewView({
-      detailEventModel: this.#createDetailEventModel(event),
-      onEditClick: () => {
-        replaceOverviewToEditCatd();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const poitPresenter = new PointPresenter({
+      tripListContainer: this.#tripEventList.element,
     });
 
-    const editCardComponnet = new EventCardView({
-      detailEventModel: this.#createDetailEventModel(event),
-      onFormSubmit: () => {
-        replaceEditCardToOverview();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replaceEditCardToOverview() {
-      replace(overviewComponnet, editCardComponnet);
-    }
-
-    function replaceOverviewToEditCatd() {
-      replace(editCardComponnet, overviewComponnet);
-    }
-
-    render(overviewComponnet, this.#tripEventList.element);
+    poitPresenter.init(this.#createDetailEventModel(event));
   }
 
   #renderEventListEmpty() {
-    render(new EventListEmptyView, this.#tripEvents);
+    render(this.#noEventListComponnet, this.#tripEvents);
   }
 
   #createDetailEventModel(event) {
