@@ -1,12 +1,12 @@
-import {render, replace} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
 import EventOverviewView from '../view/event-overview-view.js';
 import EventCardView from '../view/event-card-view.js';
 
 export default class PointPresenter {
   #tripListContainer = null;
 
-  #overviewComponnet = null;
-  #editCardComponnet = null;
+  #overviewComponent = null;
+  #editCardComponent = null;
 
   #event = null;
 
@@ -17,26 +17,48 @@ export default class PointPresenter {
   init(event) {
     this.#event = event;
 
-    this.#overviewComponnet = new EventOverviewView({
+    const prevOverviewComponent = null;
+    const prevEditCardComponnent = null;
+
+    this.#overviewComponent = new EventOverviewView({
       detailEventModel: this.#event,
       onEditClick: this.#handleEditClick,
     });
 
-    this.#editCardComponnet = new EventCardView({
+    this.#editCardComponent = new EventCardView({
       detailEventModel: this.#event,
       onFormSubmit: this.#handleEditCardSubmit,
     });
 
-    render(this.#overviewComponnet, this.#tripListContainer);
+    if(prevOverviewComponent === null || prevEditCardComponnent === null) {
+      render(this.#overviewComponent, this.#tripListContainer);
+      return;
+    }
+
+    if(this.#tripListContainer.contains(prevOverviewComponent.element)) {
+      replace(this.#overviewComponent, prevOverviewComponent);
+    }
+
+    if(this.#tripListContainer.contains(prevEditCardComponnent.element)) {
+      replace(this.#editCardComponent, prevEditCardComponnent);
+    }
+
+    remove(prevOverviewComponent);
+    remove(prevEditCardComponnent);
+  }
+
+  destroy() {
+    remove(this.#overviewComponent);
+    remove(this.#editCardComponent);
   }
 
   #replaceOverviewToEditCard() {
-    replace(this.#editCardComponnet, this.#overviewComponnet);
+    replace(this.#editCardComponent, this.#overviewComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   #replaceEditCardToOverview() {
-    replace(this.#overviewComponnet, this.#editCardComponnet);
+    replace(this.#overviewComponent, this.#editCardComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 

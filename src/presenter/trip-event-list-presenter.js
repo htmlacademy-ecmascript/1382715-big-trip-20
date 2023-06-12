@@ -13,6 +13,7 @@ export default class TripEventListPresenter {
   #events = null;
   #destinations = null;
   #availableOffers = null;
+  #pointsPresenter = new Map();
   constructor({tripEvents, eventsModel}) {
     this.#tripEvents = tripEvents;
     this.#eventsModel = eventsModel;
@@ -44,6 +45,12 @@ export default class TripEventListPresenter {
     });
 
     poitPresenter.init(this.#createDetailEventModel(event));
+    this.#pointsPresenter.set(this.#createDetailEventModel(event).pointId, poitPresenter);
+  }
+
+  #clearEventList() {
+    this.#pointsPresenter.forEach((presenter) => presenter.destroy);
+    this.#pointsPresenter.clear();
   }
 
   #renderEventListEmpty() {
