@@ -15,6 +15,7 @@ function createEventOverview(detailEventModel) {
   const eventTimeFrom = humanizeDateHoursMin(dateFrom);
   const eventTimeTo = humanizeDateHoursMin(dateTo);
   const eventTimeDuration = humanizeDurationTime(dateFrom, dateTo);
+
   const eventOffers = creatOffersList(detailEventModel.getSelectedOffers());
   const eventFavoriteClassName = isFavorite
     ? 'event__favorite-btn--active'
@@ -60,12 +61,15 @@ function createEventOverview(detailEventModel) {
 export default class EventOverview extends AbstractView{
   #detailEventModel = null;
   #handleEditClick = null;
-  constructor({detailEventModel, onEditClick}) {
+  #handleFavoriteClick = null;
+  constructor({detailEventModel, onEditClick, onFavoriteClick}) {
     super();
     this.#detailEventModel = detailEventModel;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
   get template() {
@@ -75,5 +79,10 @@ export default class EventOverview extends AbstractView{
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }

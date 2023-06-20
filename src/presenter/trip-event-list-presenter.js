@@ -1,18 +1,20 @@
-import {render, replace} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import EventOverviewView from '../view/event-overview-view.js';
-import EventCardView from '../view/event-card-view.js';
 import EventListEmptyView from '../view/event-list-empty-view.js';
+import PointPresenter from './point-presenter.js';
 
 import DetailEventModel from '../model/detail-event-model';
+import {updateItem} from '../utils/common.js';
 
 export default class TripEventListPresenter {
   #tripEventList = new TripEventsListView();
+  #noEventListComponnet = new EventListEmptyView();
   #tripEvents = null;
   #eventsModel = null;
   #events = null;
   #destinations = null;
   #availableOffers = null;
+  #pointsPresenter = new Map();
   constructor({tripEvents, eventsModel}) {
     this.#tripEvents = tripEvents;
     this.#eventsModel = eventsModel;
@@ -38,51 +40,41 @@ export default class TripEventListPresenter {
     }
   }
 
+  #handleModeChange = () => {
+    this.#pointsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handleEventChange = (updateEvent) => {
+    this.#events = updateItem(this.#events, updateEvent);
+
+    this.#pointsPresenter.get(updateEvent.id).init(updateEvent);
+  };
+
   #renderEvent(event) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditCardToOverview();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const overviewComponnet = new EventOverviewView({
-      detailEventModel: this.#createDetailEventModel(event),
-      onEditClick: () => {
-        replaceOverviewToEditCatd();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const poitPresenter = new PointPresenter({
+      tripListContainer: this.#tripEventList.element,
+      onDateChange: this.#handleEventChange,
+      onModeChange: this.#handleModeChange
     });
 
-    const editCardComponnet = new EventCardView({
-      detailEventModel: this.#createDetailEventModel(event),
-      onFormSubmit: () => {
-        replaceEditCardToOverview();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
+    poitPresenter.init(this.#createDetailEventModel(event));
+    this.#pointsPresenter.set(this.#createDetailEventModel(event).id, poitPresenter);
+  }
 
-    function replaceEditCardToOverview() {
-      replace(overviewComponnet, editCardComponnet);
-    }
-
-    function replaceOverviewToEditCatd() {
-      replace(editCardComponnet, overviewComponnet);
-    }
-
-    render(overviewComponnet, this.#tripEventList.element);
+  #clearEventList() {
+    this.#pointsPresenter.forEach((presenter) => presenter.destroy);
+    this.#pointsPresenter.clear();
   }
 
   #renderEventListEmpty() {
-    render(new EventListEmptyView, this.#tripEvents);
+    render(this.#noEventListComponnet, this.#tripEvents);
   }
 
   #createDetailEventModel(event) {
     const offersForPointByType = this.#availableOffers.find((value) => value.type === event.type).offers;
 
     return new DetailEventModel({
-      pointId: event.id,
+      id: event.id,
       basePrice: event.basePrice,
       dateFrom: event.dateFrom,
       dateTo: event.dateTo,
