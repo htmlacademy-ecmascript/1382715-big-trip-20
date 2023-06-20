@@ -1,28 +1,35 @@
 import {remove, render, replace} from '../framework/render.js';
 import EventOverviewView from '../view/event-overview-view.js';
 import EventCardView from '../view/event-card-view.js';
+import {copyDetailEventModel} from '../model/detail-event-model';
+import {Mode} from '../const.js';
 
 export default class PointPresenter {
   #tripListContainer = null;
+  #handleDateChange = null;
+  #handleModeChange = null;
 
   #overviewComponent = null;
   #editCardComponent = null;
 
   #event = null;
-
-  constructor({tripListContainer}) {
+  #mode = Mode.DEFAULT;
+  constructor({tripListContainer, onDateChange, onModeChange}) {
     this.#tripListContainer = tripListContainer;
+    this.#handleDateChange = onDateChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(event) {
     this.#event = event;
 
-    const prevOverviewComponent = null;
-    const prevEditCardComponnent = null;
+    const prevOverviewComponent = this.#overviewComponent;
+    const prevEditCardComponent = this.#editCardComponent;
 
     this.#overviewComponent = new EventOverviewView({
       detailEventModel: this.#event,
       onEditClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#editCardComponent = new EventCardView({
@@ -30,21 +37,21 @@ export default class PointPresenter {
       onFormSubmit: this.#handleEditCardSubmit,
     });
 
-    if(prevOverviewComponent === null || prevEditCardComponnent === null) {
+    if(prevOverviewComponent === null || prevEditCardComponent === null) {
       render(this.#overviewComponent, this.#tripListContainer);
       return;
     }
 
-    if(this.#tripListContainer.contains(prevOverviewComponent.element)) {
+    if(this.#mode === Mode.DEFAULT) {
       replace(this.#overviewComponent, prevOverviewComponent);
     }
 
-    if(this.#tripListContainer.contains(prevEditCardComponnent.element)) {
-      replace(this.#editCardComponent, prevEditCardComponnent);
+    if(this.#mode === Mode.EDITING) {
+      replace(this.#editCardComponent, prevEditCardComponent);
     }
 
     remove(prevOverviewComponent);
-    remove(prevEditCardComponnent);
+    remove(prevEditCardComponent);
   }
 
   destroy() {
@@ -52,14 +59,23 @@ export default class PointPresenter {
     remove(this.#editCardComponent);
   }
 
+  resetView() {
+    if(this.#mode !== Mode.DEFAULT) {
+      this.#replaceEditCardToOverview();
+    }
+  }
+
   #replaceOverviewToEditCard() {
     replace(this.#editCardComponent, this.#overviewComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceEditCardToOverview() {
     replace(this.#overviewComponent, this.#editCardComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
@@ -73,7 +89,28 @@ export default class PointPresenter {
     this.#replaceOverviewToEditCard();
   };
 
-  #handleEditCardSubmit = () => {
+  #handleFavoriteClick = () => {
+    const newEvent = copyDetailEventModel({
+      detailEventModel: this.#event,
+      isFavorite: !this.#event.isFavorite
+    });
+
+    this.#handleDateChange(newEvent);
+  };
+
+  #handleEditCardSubmit = (offers, eventType) => {
+    const newEvent = copyDetailEventModel({
+      detailEventModel: this.#event,
+      dateFrom: this.#event.dateFrom,
+      dateTo: this.#event.dateTo,
+      type: eventType,
+      isFavorite: this.#event.isFavorite,
+      destination: this.#event.destination,
+      allOffers: this.#event.allOffers,
+      selectedOffersId: offers,
+    });
+
+    this.#handleDateChange(newEvent);
     this.#replaceEditCardToOverview();
   };
 }

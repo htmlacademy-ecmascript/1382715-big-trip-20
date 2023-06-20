@@ -4,6 +4,7 @@ import EventListEmptyView from '../view/event-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 
 import DetailEventModel from '../model/detail-event-model';
+import {updateItem} from '../utils/common.js';
 
 export default class TripEventListPresenter {
   #tripEventList = new TripEventsListView();
@@ -39,13 +40,25 @@ export default class TripEventListPresenter {
     }
   }
 
+  #handleModeChange = () => {
+    this.#pointsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handleEventChange = (updateEvent) => {
+    this.#events = updateItem(this.#events, updateEvent);
+
+    this.#pointsPresenter.get(updateEvent.id).init(updateEvent);
+  };
+
   #renderEvent(event) {
     const poitPresenter = new PointPresenter({
       tripListContainer: this.#tripEventList.element,
+      onDateChange: this.#handleEventChange,
+      onModeChange: this.#handleModeChange
     });
 
     poitPresenter.init(this.#createDetailEventModel(event));
-    this.#pointsPresenter.set(this.#createDetailEventModel(event).pointId, poitPresenter);
+    this.#pointsPresenter.set(this.#createDetailEventModel(event).id, poitPresenter);
   }
 
   #clearEventList() {
@@ -61,7 +74,7 @@ export default class TripEventListPresenter {
     const offersForPointByType = this.#availableOffers.find((value) => value.type === event.type).offers;
 
     return new DetailEventModel({
-      pointId: event.id,
+      id: event.id,
       basePrice: event.basePrice,
       dateFrom: event.dateFrom,
       dateTo: event.dateTo,

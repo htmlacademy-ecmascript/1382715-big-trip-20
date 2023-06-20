@@ -1,6 +1,6 @@
 export default class DetailEventModel {
   constructor({
-    pointId,
+    id,
     basePrice,
     dateFrom,
     dateTo,
@@ -10,7 +10,7 @@ export default class DetailEventModel {
     allOffers,
     selectedOffersId
   }) {
-    this.pointId = pointId;
+    this.id = id;
     this.basePrice = basePrice;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
@@ -21,8 +21,8 @@ export default class DetailEventModel {
     this.selectedOffersId = selectedOffersId;
   }
 
-  getPointId() {
-    return this.pointId;
+  getId() {
+    return this.id;
   }
 
   getBasePrice() {
@@ -67,3 +67,30 @@ export default class DetailEventModel {
     return selectedOffers;
   }
 }
+
+function copyDetailEventModel({
+  detailEventModel,
+  id = null,
+  basePrice = null,
+  dateFrom = null,
+  dateTo = null,
+  isFavorite = null,
+  type = null,
+  destination = null,
+  allOffers = null,
+  selectedOffersId = null
+}) {
+  return new DetailEventModel({
+    id: id !== null ? id : detailEventModel.getId(),
+    basePrice: basePrice !== null ? basePrice : detailEventModel.getBasePrice(),
+    dateFrom: dateFrom !== null ? dateFrom : detailEventModel.getDateFrom(),
+    dateTo: dateTo !== null ? dateTo : detailEventModel.getDateTo(),
+    isFavorite: isFavorite !== null ? isFavorite : detailEventModel.isFavorite(),
+    type: type !== null ? type : detailEventModel.getType(),
+    destination: destination !== null ? destination : detailEventModel.getDestination(),
+    allOffers: allOffers !== null ? allOffers : detailEventModel.getAllOffers(),
+    selectedOffersId: selectedOffersId !== null ? selectedOffersId : detailEventModel.getSelectedOffersId(),
+  });
+}
+
+export {copyDetailEventModel};

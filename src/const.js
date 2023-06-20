@@ -9,4 +9,9 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {EVENT_TYPES, DESTINATION_LIST, FilterType};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
+export {EVENT_TYPES, DESTINATION_LIST, FilterType, Mode};
